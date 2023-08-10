@@ -3,8 +3,9 @@ import numpy as np
 import pickle
 import pandas as pd
 import uuid
-Model=pickle.load(open(r"C:\Users\lenovo\Intenship Project\flask\thyroid1_model.pkl",'rb'))
-le=pickle.load(open("label_encoder.pkl",'rb'))
+model=pickle.load(open(r"C:\Users\lenovo\Intenship Project\flask\thyroid1_model.pkl",'rb'))
+le=pickle.load(open(r"C:\Users\lenovo\Intenship Project\flask\label_encoder.pkl",'rb'))
+lef=pickle.load(open(r"C:\Users\lenovo\Intenship Project\flask\label_encoder_y.pkl",'rb'))
 app=Flask(__name__)
 @app.route("/")
 def about():
@@ -18,27 +19,38 @@ def home():
 def predict():
     return render_template('predict.html')
 
-@app.route('/submit', methods=['POST', 'GET'])
+@app.route('/submit', methods=['POST','GET'])
 def submit():
     if request.method == 'POST':
-        try:
-            x = [[float(x) for x in request.form.values()]]
-            col = ['goitre', 'tumor', 'hypopituitary', 'psych', 'TSH', 'T3', 'TT4', 'T4U', 'FTI', 'TBG']
-            x_df = pd.DataFrame(x, columns=col)
+        data = []
 
-            # Make prediction using the loaded model
-            pred = Model.predict(x_df)
-            pred_label = le.inverse_transform(pred)[0]
+        Goitre = request.form['Goitre']
+        Tumor = request.form['Tumor']
+        Hypopituitary = request.form['Hypopituitary']
+        Psych = request.form['Psych']
 
-            # Generate a unique request ID
-            request_id = str(uuid.uuid4())
+        data.extend([1 if val == 't' else 0 for val in [Goitre, Tumor, Hypopituitary, Psych]])
 
-            return render_template('submit.html', prediction_text=pred_label, request_id=request_id)
-        except Exception as e:
-            error_message = f"An error occurred: {str(e)}"
-            return render_template('submit.html', error_message=error_message)
+        num = ['TSH_VAL', 'T3_VAL', 'TT4_VAL', 'T4U_VAL', 'FTI_VAL', 'TBG_VAL']
+        for i in num:
+            data.append(float(request.form[i]))
 
-    return render_template('submit.html', prediction_text="", request_id="")
+        col = ['goitre', 'tumor', 'hypopituitary', 'psych', 'TSH', 'T3', 'TT4', 'T4U', 'FTI', 'TBG']
+        x = pd.DataFrame([data], columns=col)
+        pred = model.predict(x)
+        diagnoses = {
+            0: "antithyroid treatment",
+            1: "binding protein",
+            2: "general health",
+            3: "hyperthyroid",
+            4: "hypothyroid",
+            5: "miscellaneous",
+            6: "replacement therapy"
+        }
+        prediction_text = diagnoses.get(pred[0], "unknown")
 
-if __name__ =="__main__":
-    app.run(debug=False)
+        return render_template('submit.html', prediction_text=prediction_text)
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
