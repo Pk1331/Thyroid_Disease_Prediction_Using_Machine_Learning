@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -106,10 +105,26 @@
     function goToHome() {
       window.location.href ="{{ url_for('home') }}";
     }
-
-    function submitForm() {
-      window.location.href="{{url_for('submit')}}"
+    function validateForm() {
+    // Get values from the form
+    var goitre = document.getElementById("1").value;
+    var tumor = document.getElementById("2").value;
+    var hypopituitary = document.getElementById("3").value;
+    var psych = document.getElementById("4").value;
+    var tsh = document.getElementById("input1").value;
+    var t3 = document.getElementById("input2").value;
+    var tt4 = document.getElementById("input3").value;
+    var t4u = document.getElementById("input4").value;
+    var fti = document.getElementById("input5").value;
+    var tbg = document.getElementById("input6").value;
+    if (goitre === "" || tumor === "" || hypopituitary === "" || psych === "" ||
+        tsh === "" || t3 === "" || tt4 === "" || t4u === "" || fti === "" || tbg === "") {
+      alert("Please fill in all required fields.");
+      return false; 
     }
+    return true;
+  }
+
 </script>
 </head>
 
@@ -120,60 +135,50 @@
   </div>
   <div class="left-container">
     <div class="title">Thyroid Disease Classification</div>
-    <form class="form-container" onsubmit="return false;" action="{{url_for( 'submit')}}" method="post">
+    <form class="form-container"  action="{{url_for( 'submit')}}" method="post" onsubmit="return validateForm()">
       <div class="form-group">
-        <label for="dropdown1">goitre</label>
-        <select id="dropdown1">
-          <option value="option1">Male</option>
-          <option value="option2">Female</option>
-        </select>
+        <label for="1">goitre</label>
+        <input type="text" id="1" name="Goitre" list="l" placeholder="Enter True or Flase">
       </div>
       <div class="form-group">
-        <label for="dropdown2">tumor</label>
-        <select id="dropdown2">
-          <option value="option1">Male</option>
-          <option value="option2">Female</option>
-        </select>
+        <label for="2">tumor</label>
+        <input type="text" id="2" name="Tumor" list="l" placeholder="Enter True or Flase">
       </div>
       <div class="form-group">
-        <label for="dropdown3">hypopituatry</label>
-        <select id="dropdown3">
-          <!-- Add options as needed -->
-          <option value="option1">Male</option>
-          <option value="option2">Female</option>
-        </select>
+        <label for="3">hypopituatry</label>
+        <input type="text" id="3" name="Hypopituitary" list="l" placeholder="Enter True or Flase">
       </div>
       <div class="form-group">
-        <label for="dropdown4">psych</label>
-        <select id="dropdown4">
-          <!-- Add options as needed -->
-          <option value="option1">Male</option>
-          <option value="option2">Female</option>
-        </select>
+        <label for="4">psych</label>
+        <input type="text" id="4" name="Psych" list="l" placeholder="Enter True or Flase">
       </div>
+      <datalist id="l">
+        <option>f</option>
+        <option>t</option>
+      </datalist>
       <div class="form-group">
         <label for="input1">TSH</label>
-        <input type="text" id="input1" placeholder="TSH"/>
+        <input type="text" id="input1" name="TSH_VAL"placeholder="TSH"/>
       </div>
       <div class="form-group">
         <label for="input2">T3</label>
-        <input type="text" id="input2" placeholder="T3"/>
+        <input type="text" id="input2" name="T3_VAL" placeholder="T3"/>
       </div>
       <div class="form-group">
         <label for="input3">TT4</label>
-        <input type="text" id="input3" placeholder="TT4" />
+        <input type="text" id="input3" name="TT4_VAL" placeholder="TT4" />
       </div>
       <div class="form-group">
         <label for="input4">T4U</label>
-        <input type="text" id="input4" placeholder="T4U" />
+        <input type="text" id="input4"name="T4U_VAL" placeholder="T4U" />
       </div>
       <div class="form-group">
         <label for="input5">FTI</label>
-        <input type="text" id="input5" placeholder="FTI"/>
+        <input type="text" id="input5"name="FTI_VAL" placeholder="FTI"/>
       </div>
       <div class="form-group">
         <label for="input6">TBG</label>
-        <input type="text" id="input6" placeholder="TBG" />
+        <input type="text" id="input6" name="TBG_VAL" placeholder="TBG" />
       </div>
       <button class="submit-button" onclick="submitForm()">Submit</button>
     </form>
